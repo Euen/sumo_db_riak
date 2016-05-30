@@ -440,10 +440,10 @@ wakeup_fun({_, _, <<"$nil">>}) ->
   undefined;
 wakeup_fun({FieldType, _, FieldValue})
     when FieldType =:= datetime; FieldType =:= date ->
-  case {FieldType, iso8601:is_datetime(FieldValue)} of
-    {datetime, true} -> iso8601:parse(FieldValue);
-    {date, true}     -> {Date, _} = iso8601:parse(FieldValue), Date;
-    _                -> FieldValue
+  case {FieldType, parse_date(FieldValue)} of
+    {datetime, {ok, DateTime}} -> DateTime;
+    {date,     {ok, DateTime}} -> {Date, _} = DateTime, Date;
+    _                          -> FieldValue
   end;
 wakeup_fun({integer, _, FieldValue}) when is_binary(FieldValue) ->
   binary_to_integer(FieldValue);
@@ -451,6 +451,12 @@ wakeup_fun({float, _, FieldValue}) when is_binary(FieldValue) ->
   binary_to_float(FieldValue);
 wakeup_fun({_, _, FieldValue}) ->
   FieldValue.
+
+%% @private
+parse_date(Date) ->
+  try {ok, iso8601:parse(Date)}
+  catch _:_ -> false
+  end.
 
 %% @private
 doc_id(Doc) ->
