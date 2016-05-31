@@ -84,7 +84,7 @@
 %% <a href="http://docs.basho.com/riak/latest/dev/using/basics">Reference</a>.
 -record(state, {
   conn     :: connection(),
-  bucket   :: bucket(),
+  bucket   :: {binary(), binary()},
   index    :: index(),
   get_opts :: get_options(),
   put_opts :: put_options(),
@@ -354,13 +354,13 @@ rmap_to_map(RMap) ->
   end, #{}, riakc_map:value(RMap)).
 
 -spec fetch_map(
-  connection(), bucket(), key(), options()
+  connection(), {binary(), binary()}, key(), options()
 ) -> {ok, riakc_datatype:datatype()} | {error, term()}.
 fetch_map(Conn, Bucket, Key, Opts) ->
   riakc_pb_socket:fetch_type(Conn, Bucket, Key, Opts).
 
 -spec fetch_docs(
-  sumo:schema_name(), connection(), bucket(), [key()], options()
+  sumo:schema_name(), connection(), {binary(), binary()}, [key()], options()
 ) -> [sumo_internal:doc()].
 fetch_docs(DocName, Conn, Bucket, Keys, Opts) ->
   lists:foldl(fun(K, Acc) ->
@@ -371,14 +371,13 @@ fetch_docs(DocName, Conn, Bucket, Keys, Opts) ->
   end, [], Keys).
 
 -spec delete_map(
-  connection(), bucket(), key(), options()
+  connection(), {binary(), binary()}, key(), options()
 ) -> ok | {error, term()}.
 delete_map(Conn, Bucket, Key, Opts) ->
   riakc_pb_socket:delete(Conn, Bucket, Key, Opts).
 
--spec update_map(
-  connection(), bucket(), key() | undefined, riakc_map:crdt_map(), options()
-) ->
+-spec update_map(connection(), {binary(), binary()}, key() | undefined,
+                 riakc_map:crdt_map(), options()) ->
   ok | {ok, Key::binary()} | {ok, riakc_datatype:datatype()} |
   {ok, Key::binary(), riakc_datatype:datatype()} | {error, term()}.
 update_map(Conn, Bucket, Key, Map, Opts) ->
