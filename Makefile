@@ -5,7 +5,7 @@ CONFIG ?= test/test.config
 DEPS = sumo_db riakc iso8601
 
 dep_sumo_db = git https://github.com/inaka/sumo_db.git            01db604
-dep_riakc   = git https://github.com/inaka/riak-erlang-client.git 2.1.1-R18
+dep_riakc   = git https://github.com/basho/riak-erlang-client.git 2.1.2
 dep_iso8601 = git https://github.com/zerotao/erlang_iso8601.git   0d14540
 
 TEST_DEPS = katana_test mixer
